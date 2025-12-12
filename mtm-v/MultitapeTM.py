@@ -29,7 +29,7 @@ class Tapes:
 		if direction == 'L':
 			self.tapeHead -= 1
 
-			# Insert a blank cell in the tape if it goes past the left end
+			# Insert a blank cell in the tape if tapehead goes past the left end
 			if self.tapeHead < 0:
 				self.tape_symbols.insert(0, self.blank)		
 				self.tapeHead = 0
@@ -37,7 +37,7 @@ class Tapes:
 		elif direction == 'R':
 			self.tapeHead += 1
 
-			# Insert a blank cell in the tape if it goes past the right end
+			# Insert a blank cell in the tape if tapehead goes past the right end
 			if self.tapeHead >= len(self.tape_symbols):
 				self.tape_symbols.append(self.blank)
 
@@ -49,7 +49,7 @@ class Tapes:
 
 		for symbol in range(len(self.tape_symbols)):
 			if symbol == self.tapeHead:
-				output += "." + self.tape_symbols[symbol]	# dot marker to show the current tape head position on its right side
+				output += "[" + self.tape_symbols[symbol] + "]"	 	# square brackets marker to show the current tape head position
 			
 			else:
 				output += self.tape_symbols[symbol]
@@ -88,7 +88,6 @@ class State:
 		return self.transitions.get(current_symbols, None)
 
 class MultiTapeTM():
-	# tapeHead - is the current state index
 	def __init__(self, start_state, final_state, blank='B', num_of_tapes=1):
 		self.state = start_state			# current state
 		self.start_state = self.state		# copy the original start state
@@ -102,7 +101,7 @@ class MultiTapeTM():
 		self.states[state.state_name] = state
     
 	def input_cell(self, string_input):
-		"""Loads the string input in tape 0 and sets up other tapes."""
+		"""Loads the string input in tape 1 and sets up other tapes."""
 
 		for i in range(len(self.tapes)):
 			if i == 0:		# input will go in the first tape
@@ -128,6 +127,7 @@ class MultiTapeTM():
 		transitions = current_state.get_transition(symbols)
 
 		if not transitions:
+			# TM will halt is no transition fp
 			print("No transition defined.\nTuring Machine HALTS")
 			return False
 		
@@ -159,7 +159,7 @@ class MultiTapeTM():
 
 		# Prints each tape
 		for tape in range(len(self.tapes)):
-			output += "Tape #" + str(tape) + ":" + str(self.tapes[tape]) + "\n"
+			output += "Tape #" + str(tape + 1) + ": " + str(self.tapes[tape]) + "\n"
 
 		return output
 	
@@ -168,11 +168,11 @@ if __name__ == '__main__':
 	q0 = State('q0')		# Start/current state of the example
 	q0.add_transition(('1',), 'q0', ('0',), ('R',))
 	q0.add_transition(('0',), 'q0', ('1',), ('R',))
-	q0.add_transition(('#',), 'q_accept', ('#',), ('S',))
+	q0.add_transition(('B',), 'q_accept', ('B',), ('S',))
 	q_accept = State('q_accept')
 
-	# ENTRY POINT - Example 1
-	mtm1 = MultiTapeTM('q0', 'q_accept', blank='#', num_of_tapes=1)
+		# ENTRY POINT - Example 1
+	mtm1 = MultiTapeTM('q0', 'q_accept', blank='B', num_of_tapes=1)
 	mtm1.add_state(q0)
 	mtm1.add_state(q_accept)
 	accepted = mtm1.is_accepted('010101')
@@ -182,18 +182,18 @@ if __name__ == '__main__':
 
     # Example 2: Copy tape0 -> tape1 (2-tape MTM)
 	q_copy = State('q_copy')
-	q_copy.add_transition(('a','#'), 'q_copy', ('a','a'), ('R','R'))
-	q_copy.add_transition(('h','#'), 'q_copy', ('h','h'), ('R','R'))
-	q_copy.add_transition(('n','#'), 'q_copy', ('n','n'), ('R','R'))
-	q_copy.add_transition(('#','#'), 'q_accept', ('#','#'), ('S','S'))
+	q_copy.add_transition(('a','B'), 'q_copy', ('a','a'), ('R','R'))
+	q_copy.add_transition(('h','B'), 'q_copy', ('h','h'), ('R','R'))
+	q_copy.add_transition(('n','B'), 'q_copy', ('n','n'), ('R','R'))
+	q_copy.add_transition(('B','B'), 'q_accept', ('B','B'), ('S','S'))
 	q_accept2 = State('q_accept')
 
-	# ENTRY POINT - Example 2
-	mtm2 = MultiTapeTM('q_copy', 'q_accept', blank='#', num_of_tapes=2)
+		# ENTRY POINT - Example 2
+	mtm2 = MultiTapeTM('q_copy', 'q_accept', blank='B', num_of_tapes=2)
 	mtm2.add_state(q_copy)
 	mtm2.add_state(q_accept2)
 	accepted2 = mtm2.is_accepted('hannah')
-	print("\nCopy Tape0 -> Tape1 (2-tape):")
+	print("\nCopy Tape 1 -> Tape 2 (2-tape):")
 	print("Accepted:", accepted2)
 	print(mtm2)
 
