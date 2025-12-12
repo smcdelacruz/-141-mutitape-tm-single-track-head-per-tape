@@ -1,6 +1,7 @@
 """
 CMSC 141
 Multitape Turing Machine - Single Head & Track Per Tape
+Authored by: Sophe Mae C. Dela Cruz
 """
 
 START_HEAD_INDEX = 2
