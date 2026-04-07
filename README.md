@@ -1,1 +1,1 @@
-# -CMSC141--mutitape-turing-machine-single-track-and-single-head-per-tape
+# CMSC 141 Multitape Turing Machine - Single Trask and Single Head Per Tape
